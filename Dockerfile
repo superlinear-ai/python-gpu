@@ -1,98 +1,67 @@
 # syntax=docker/dockerfile:1
+ARG DEBIAN_FRONTEND=noninteractive
 ARG PYTHON_VERSION=3.8
 FROM python:$PYTHON_VERSION-slim AS base
 
-# Install Poetry.
-ENV POETRY_VERSION 1.4.2
-RUN --mount=type=cache,target=/root/.cache/pip/ \
-    pip install poetry~=$POETRY_VERSION
 
-# Install compilers that may be required for certain packages or platforms.
-RUN rm /etc/apt/apt.conf.d/docker-clean
-RUN --mount=type=cache,target=/var/cache/apt/ \
-    --mount=type=cache,target=/var/lib/apt/ \
-    apt-get update && \
-    apt-get install --no-install-recommends --yes build-essential
-
-# Create a non-root user and switch to it [1].
-# [1] https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user
-ARG UID=1000
-ARG GID=$UID
-RUN groupadd --gid $GID user && \
-    useradd --create-home --gid $GID --uid $UID user --no-log-init && \
-    chown user /opt/
-USER user
-
-# Create and activate a virtual environment.
-RUN python -m venv /opt/pyhton-gpu-env
-ENV PATH /opt/pyhton-gpu-env/bin:$PATH
-ENV VIRTUAL_ENV /opt/pyhton-gpu-env
-
-# Set the working directory.
-WORKDIR /workspaces/pyhton-gpu/
-
-# Install the run time Python dependencies in the virtual environment.
-COPY --chown=user:user poetry.lock* pyproject.toml /workspaces/pyhton-gpu/
-RUN mkdir -p /home/user/.cache/pypoetry/ && mkdir -p /home/user/.config/pypoetry/ && \
-    mkdir -p src/pyhton_gpu/ && touch src/pyhton_gpu/__init__.py && touch README.md
-RUN --mount=type=cache,uid=$UID,gid=$GID,target=/home/user/.cache/pypoetry/ \
-    poetry install --only main --no-interaction
+# NVIDIA: https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/11.8.0/ubuntu2204/base/Dockerfile
+# specify the version of the CUDA Toolkit to use and the which driver versions are compatible for each brand of GPU.
+ENV NVARCH x86_64
+ENV NVIDIA_REQUIRE_CUDA "cuda>=11.8 brand=tesla,driver>=450,driver<451 brand=tesla,driver>=470,driver<471 brand=unknown,driver>=470,driver<471 brand=nvidia,driver>=470,driver<471 brand=nvidiartx,driver>=470,driver<471 brand=geforce,driver>=470,driver<471 brand=geforcertx,driver>=470,driver<471 brand=quadro,driver>=470,driver<471 brand=quadrortx,driver>=470,driver<471 brand=titan,driver>=470,driver<471 brand=titanrtx,driver>=470,driver<471 brand=tesla,driver>=510,driver<511 brand=unknown,driver>=510,driver<511 brand=nvidia,driver>=510,driver<511 brand=nvidiartx,driver>=510,driver<511 brand=geforce,driver>=510,driver<511 brand=geforcertx,driver>=510,driver<511 brand=quadro,driver>=510,driver<511 brand=quadrortx,driver>=510,driver<511 brand=titan,driver>=510,driver<511 brand=titanrtx,driver>=510,driver<511 brand=tesla,driver>=515,driver<516 brand=unknown,driver>=515,driver<516 brand=nvidia,driver>=515,driver<516 brand=nvidiartx,driver>=515,driver<516 brand=geforce,driver>=515,driver<516 brand=geforcertx,driver>=515,driver<516 brand=quadro,driver>=515,driver<516 brand=quadrortx,driver>=515,driver<516 brand=titan,driver>=515,driver<516 brand=titanrtx,driver>=515,driver<516"
+# Sets the runtime version of CUDA to use for the image.
+ENV NV_CUDA_CUDART_VERSION 11.8.89-1
+ENV NV_CUDA_COMPAT_PACKAGE cuda-compat-11-8
 
 
+#  Updates the package index and installs the necessarys packages to add the CUDA repository, including `gnupg2`, `curl`, and `ca-certificates`. It then downloads the CUDA keyring package and installs it. Finally, it removes the installed packages that are no longer needed and cleans up the apt cache.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gnupg2 curl ca-certificates && \
+    curl -fsSLO https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/${NVARCH}/cuda-keyring_1.0-1_all.deb && \
+    dpkg -i cuda-keyring_1.0-1_all.deb && \
+    apt-get purge --autoremove -y curl \
+    && rm -rf /var/lib/apt/lists/*
 
-FROM base as ci
+# Install CUDA Toolkit, cuDNN SDK 8.6.0, optionally TensorRT
+# https://github.com/tensorflow/serving/blob/master/tensorflow_serving/tools/docker/Dockerfile.gpu
+ENV CUDNN_VERSION=8.6.0.163
+ENV TF_TENSORRT_VERSION=8.4.3
+ENV CUDA=11.8
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        cuda-cudart-11-8=${NV_CUDA_CUDART_VERSION} \
+        ${NV_CUDA_COMPAT_PACKAGE} \
+        cuda-command-line-tools-11-8 \
+        libcublas-dev-11-8 \
+        cuda-nvcc-11-8 \
+        libcublas-11-8 \
+        cuda-cupti-11-8 \
+        cuda-nvrtc-11-8 \
+        cuda-nvprune-11-8 \
+        cuda-libraries-11-8 \
+        libcufft-11-8 \
+        libcurand-11-8 \
+        libcusolver-11-8 \
+        libcusparse-11-8 \
+        libtool \
+        libcudnn8=${CUDNN_VERSION}-1+cuda${CUDA} \
+        libnvinfer8=${TF_TENSORRT_VERSION}-1+cuda11.6 \
+        libnvinfer-plugin8=${TF_TENSORRT_VERSION}-1+cuda11.6 \
+        build-essential \
+        pkg-config \
+        software-properties-common \
+        unzip && \       
+    find /usr/local/cuda-11.8/lib64/ -type f -name 'lib*_static.a' -not -name 'libcudart_static.a' -delete \
+    && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Allow CI to run as root.
-USER root
-
-# Install git so we can run pre-commit.
-RUN --mount=type=cache,target=/var/cache/apt/ \
-    --mount=type=cache,target=/var/lib/apt/ \
-    apt-get update && \
-    apt-get install --no-install-recommends --yes git
-
-# Install the CI/CD Python dependencies in the virtual environment.
-RUN --mount=type=cache,target=/root/.cache/pypoetry/ \
-    poetry install --only main,test --no-interaction
+# # Required for nvidia-docker v1
+RUN echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf \
+    && echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
 
 
+# Sets environment variables that are required by the `nvidia-container-runtime` to expose all the NVIDIA devices and enable compute and utility capabilities 
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 
-FROM base as dev
-
-# Install development tools: curl, git, gpg, ssh, starship, sudo, vim, and zsh.
-USER root
-RUN --mount=type=cache,target=/var/cache/apt/ \
-    --mount=type=cache,target=/var/lib/apt/ \
-    apt-get update && \
-    apt-get install --no-install-recommends --yes curl git gnupg ssh sudo vim zsh && \
-    sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- "--yes" && \
-    usermod --shell /usr/bin/zsh user && \
-    echo 'user ALL=(root) NOPASSWD:ALL' > /etc/sudoers.d/user && chmod 0440 /etc/sudoers.d/user
-USER user
-
-# Install the development Python dependencies in the virtual environment.
-RUN --mount=type=cache,uid=$UID,gid=$GID,target=/home/user/.cache/pypoetry/ \
-    poetry install --no-interaction
-
-# Persist output generated during docker build so that we can restore it in the dev container.
-COPY --chown=user:user .pre-commit-config.yaml /workspaces/pyhton-gpu/
-RUN mkdir -p /opt/build/poetry/ && cp poetry.lock /opt/build/poetry/ && \
-    git init && pre-commit install --install-hooks && \
-    mkdir -p /opt/build/git/ && cp .git/hooks/commit-msg .git/hooks/pre-commit /opt/build/git/
-
-# Configure the non-root user's shell.
-ENV ANTIDOTE_VERSION 1.8.6
-RUN git clone --branch v$ANTIDOTE_VERSION --depth=1 https://github.com/mattmc3/antidote.git ~/.antidote/ && \
-    echo 'zsh-users/zsh-syntax-highlighting' >> ~/.zsh_plugins.txt && \
-    echo 'zsh-users/zsh-autosuggestions' >> ~/.zsh_plugins.txt && \
-    echo 'source ~/.antidote/antidote.zsh' >> ~/.zshrc && \
-    echo 'antidote load' >> ~/.zshrc && \
-    echo 'eval "$(starship init zsh)"' >> ~/.zshrc && \
-    echo 'HISTFILE=~/.history/.zsh_history' >> ~/.zshrc && \
-    echo 'HISTSIZE=1000' >> ~/.zshrc && \
-    echo 'SAVEHIST=1000' >> ~/.zshrc && \
-    echo 'setopt share_history' >> ~/.zshrc && \
-    echo 'bindkey "^[[A" history-beginning-search-backward' >> ~/.zshrc && \
-    echo 'bindkey "^[[B" history-beginning-search-forward' >> ~/.zshrc && \
-    mkdir ~/.history/ && \
-    zsh -c 'source ~/.zshrc'
+# Adds the NVIDIA binary paths to the system's `PATH` environment variable.
+ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
+ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
