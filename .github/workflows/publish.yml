@@ -14,11 +14,11 @@ jobs:
       matrix:
         version: 
           - python: "3.8"
-            tag: "cuda11.8-python3.8"
+            tag: "3.8-cuda11.8"
           - python: "3.9"
-            tag: "cuda11.8-python3.9"
+            tag: "3.9-cuda11.8"
           - python: "3.10"
-            tag: "cuda11.8-python3.10"
+            tag: "3.10-cuda11.8"
 
     steps:
     - name: Checkout
