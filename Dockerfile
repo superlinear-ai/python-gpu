@@ -14,7 +14,7 @@ ARG LIBINVER_VERSION=8.4.3-1+cuda11.6
 # NVIDIA: https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/11.8.0/ubuntu2204/base/Dockerfile
 # specify the version of the CUDA Toolkit to use and the which driver versions are compatible for each brand of GPU.
 
-ENV NVARCH x86_64
+# ENV NVARCH x86_64
 ENV CUDA $CUDA
 ENV CUDNN_VERSION $CUDNN_VERSION
 ENV NV_CUDA_CUDART_VERSION $NV_CUDA_CUDART_VERSION
