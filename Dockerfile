@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
-ARG DEBIAN_FRONTEND=noninteractive
 ARG PYTHON_VERSION=3.8
 FROM python:$PYTHON_VERSION-slim AS base
 
+ARG DEBIAN_FRONTEND=noninteractive
 ARG CUDA=11.8
 ARG NV_CUDA_CUDART_VERSION=11.8.89-1
 ARG NV_CUDA_COMPAT_PACKAGE=cuda-compat-11-8
@@ -14,7 +14,7 @@ ARG LIBINVER_VERSION=8.4.3-1+cuda11.6
 # NVIDIA: https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/11.8.0/ubuntu2204/base/Dockerfile
 # specify the version of the CUDA Toolkit to use and the which driver versions are compatible for each brand of GPU.
 
-# ENV NVARCH x86_64
+ENV NVARCH x86_64
 ENV CUDA $CUDA
 ENV CUDNN_VERSION $CUDNN_VERSION
 ENV NV_CUDA_CUDART_VERSION $NV_CUDA_CUDART_VERSION
