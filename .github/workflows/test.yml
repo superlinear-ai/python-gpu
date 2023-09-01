@@ -11,6 +11,7 @@ jobs:
       matrix:
         python-version: ["3.8"]
         cuda-version: ["11.8"]
+        platform: ["linux/amd64", "linux/arm64"]
 
     steps:
     - name: Checkout
@@ -27,7 +28,7 @@ jobs:
       with:
         build-args: PYTHON_VERSION=${{ matrix.python-version }},CUDA_VERSION=${{ matrix.cuda-version }}
         context: .
-        platforms: linux/amd64,linux/arm64
+        platforms: ${{ matrix.platform }}
         tags: radixai/python-gpu:${{ matrix.python-version }}-cuda${{ matrix.cuda-version }}
 
     - name: Test Docker image
