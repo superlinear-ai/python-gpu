@@ -24,9 +24,6 @@ jobs:
       with:
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
-      
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v4
@@ -35,4 +32,4 @@ jobs:
         context: .
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: radixai/python-gpu:${{ matrix.python-version.tag }}-cuda${{ matrix.cuda-version.tag }}
+        tags: radixai/python-gpu:${{ matrix.python-version }}-cuda${{ matrix.cuda-version }}

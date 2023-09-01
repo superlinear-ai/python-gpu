@@ -22,16 +22,13 @@ jobs:
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-
     - name: Build Docker image
       uses: docker/build-push-action@v4
       with:
         build-args: PYTHON_VERSION=${{ matrix.python-version }},CUDA_VERSION=${{ matrix.cuda-version }}
         context: .
         platforms: linux/amd64,linux/arm64
-        tags: radixai/python-gpu:${{ matrix.python-version.tag }}-cuda${{ matrix.cuda-version.tag }}
+        tags: radixai/python-gpu:${{ matrix.python-version }}-cuda${{ matrix.cuda-version }}
 
     - name: Test Docker image
       run: docker run --rm ${{ env.TEST_TAG }}
