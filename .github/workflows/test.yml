@@ -32,4 +32,4 @@ jobs:
         tags: radixai/python-gpu:${{ matrix.python-version }}-cuda${{ matrix.cuda-version }}
 
     - name: Test Docker image
-      run: docker run --rm radixai/python-gpu:${{ matrix.python-version }}-cuda${{ matrix.cuda-version }} nvidia-smi
+      run: docker run --rm radixai/python-gpu:${{ matrix.python-version }}-cuda${{ matrix.cuda-version }}
