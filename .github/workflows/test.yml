@@ -26,7 +26,9 @@ jobs:
     - name: Build Docker image
       uses: docker/build-push-action@v4
       with:
-        build-args: PYTHON_VERSION=${{ matrix.python-version }},CUDA_VERSION=${{ matrix.cuda-version }}
+        build-args: |
+          "PYTHON_VERSION=${{ matrix.python-version }}"
+          "CUDA_VERSION=${{ matrix.cuda-version }}"
         context: .
         platforms: ${{ matrix.platform }}
         tags: radixai/python-gpu:${{ matrix.python-version }}-cuda${{ matrix.cuda-version }}

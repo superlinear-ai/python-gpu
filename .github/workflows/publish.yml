@@ -29,7 +29,9 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v4
       with:
-        build-args: PYTHON_VERSION=${{ matrix.python-version }},CUDA_VERSION=${{ matrix.cuda-version }}
+        build-args: |
+          "PYTHON_VERSION=${{ matrix.python-version }}"
+          "CUDA_VERSION=${{ matrix.cuda-version }}"
         context: .
         platforms: ${{ matrix.platform }}
         push: true
