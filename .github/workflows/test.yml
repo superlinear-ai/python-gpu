@@ -1,13 +1,10 @@
-name: Publish
+name: Test
 
 on:
-  push:
-    branches:
-      - main
-      - master
+  pull_request:
 
 jobs:
-  publish:
+  test:
     runs-on: ubuntu-latest
 
     strategy:
@@ -25,11 +22,13 @@ jobs:
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
 
-    - name: Build and push Docker image
+    - name: Build Docker image
       uses: docker/build-push-action@v4
       with:
         build-args: PYTHON_VERSION=${{ matrix.python-version }},CUDA_VERSION=${{ matrix.cuda-version }}
         context: .
         platforms: linux/amd64,linux/arm64
-        push: true
         tags: radixai/python-gpu:${{ matrix.python-version.tag }}-cuda${{ matrix.cuda-version.tag }}
+
+    - name: Test Docker image
+      run: docker run --rm ${{ env.TEST_TAG }}
