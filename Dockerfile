@@ -4,9 +4,9 @@ ARG CUDA_VERSION=11.8
 ARG CUDNN_VERSION=8.9.4.25
 ARG TENSORRT_VERSION=8.6.1.6
 FROM python:$PYTHON_VERSION-slim AS base
-ENV CUDA_VERSION=11.8
-ENV CUDNN_VERSION=8.9.4.25
-ENV TENSORRT_VERSION=8.6.1.6
+ARG CUDA_VERSION=11.8
+ARG CUDNN_VERSION=8.9.4.25
+ARG TENSORRT_VERSION=8.6.1.6
 # Install wget.
 RUN apt-get update && \
     apt-get install --yes wget && \
@@ -28,8 +28,8 @@ RUN wget --quiet https://developer.download.nvidia.com/compute/cuda/repos/ubuntu
     rm cuda-keyring_1.1-1_all.deb && \
     apt-get update && \
     apt-get install --yes \
-        libcudnn8=8.9.4.25-1+cuda11.8 \
-        libnvinfer-lean8=8.6.1.6-1+cuda11.8 && \
+        libcudnn8=$CUDNN_VERSION-1+cuda$CUDA_VERSION \
+        libnvinfer-lean8=$TENSORRT_VERSION-1+cuda$CUDA_VERSION && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
