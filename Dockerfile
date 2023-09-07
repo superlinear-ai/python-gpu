@@ -17,3 +17,4 @@ ENV PATH=/opt/conda/bin:$PATH
 
 # Install CUDA.
 RUN conda install --channel nvidia --yes cuda-runtime="$CUDA_VERSION"
+RUN conda install -c conda-forge cudnn
