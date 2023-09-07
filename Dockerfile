@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 ARG PYTHON_VERSION=3.8
 ARG CUDA_VERSION=11.8
-FROM python:$PYTHON_VERSION-slim AS base
+FROM python:$PYTHON_VERSION-slim
 
 # Install wget.
 RUN apt-get update && \
