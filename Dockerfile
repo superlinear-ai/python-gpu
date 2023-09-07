@@ -4,7 +4,8 @@ ARG CUDA_VERSION=11.8
 ARG CUDNN_VERSION=8.9.4.25
 ARG TENSORRT_VERSION=8.6.1.6
 FROM python:$PYTHON_VERSION-slim AS base
-
+ENV CUDNN_VERSION=8.9.4.25
+ENV TENSORRT_VERSION=8.6.1.6
 # Install wget.
 RUN apt-get update && \
     apt-get install --yes wget && \
