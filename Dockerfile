@@ -28,8 +28,8 @@ RUN wget --quiet https://developer.download.nvidia.com/compute/cuda/repos/debian
     rm cuda-keyring_1.1-1_all.deb && \
     apt-get update && \
     apt-get install --yes \
-        libcudnn8=$CUDNN_VERSION-1+cuda$CUDA_VERSION \
-        libnvinfer-lean8=$TENSORRT_VERSION-1+cuda$CUDA_VERSION && \
+        libcudnn8=8.9.4.25-1+cuda11.8 \
+        libnvinfer-lean8=8.6.1.6-1+cuda11.8 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
