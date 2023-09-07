@@ -23,7 +23,7 @@ ENV PATH=/opt/conda/bin:$PATH
 RUN conda install --channel nvidia --yes cuda-runtime="$CUDA_VERSION"
 
 # Install cuDNN and TensorRT.
-RUN wget --quiet https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/cuda-keyring_1.1-1_all.deb && \
+RUN wget --quiet https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.1-1_all.deb && \
     dpkg -i cuda-keyring_1.1-1_all.deb && \
     rm cuda-keyring_1.1-1_all.deb && \
     apt-get update && \
