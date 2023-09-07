@@ -12,7 +12,8 @@ RUN apt-get update && \
 # Install Miniconda.
 RUN CONDA_ARCH=$([ "$TARGETARCH" = "arm64" ] && echo "aarch64" || echo "x86_64") && \
     wget --quiet "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-$CONDA_ARCH.sh" --output-document ~/miniconda.sh && \
-    /bin/bash ~/miniconda.sh -b -p /opt/conda
+    /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh
 ENV PATH=/opt/conda/bin:$PATH
 
 # Install CUDA.
