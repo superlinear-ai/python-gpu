@@ -30,3 +30,4 @@ RUN wget --quiet https://developer.download.nvidia.com/compute/cuda/repos/debian
         libnvinfer-lean8=$TENSORRT_VERSION-1+cuda$CUDA_VERSION && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
