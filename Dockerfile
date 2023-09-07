@@ -16,4 +16,5 @@ RUN CONDA_ARCH=$([ "$TARGETARCH" = "arm64" ] && echo "aarch64" || echo "x86_64")
 ENV PATH=/opt/conda/bin:$PATH
 
 # Install CUDA.
-RUN conda install --channel nvidia --yes cuda-runtime="$CUDA_VERSION"
+RUN conda install --channel nvidia --yes cuda-runtime="$CUDA_VERSION" && \
+    conda clean --all --force-pkgs-dirs --yes
