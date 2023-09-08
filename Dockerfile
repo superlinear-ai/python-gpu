@@ -15,7 +15,9 @@ RUN CONDA_ARCH=$([ "$TARGETARCH" = "arm64" ] && echo "aarch64" || echo "x86_64")
 ENV PATH=/opt/conda/bin:$PATH
 ENV LD_LIBRARY_PATH=/opt/conda/lib:$LD_LIBRARY_PATH
 
-# Install CUDA.
+# Install CUDA and cuDNN.
 ARG CUDA_VERSION=11.8
 ARG CUDNN_VERSION=8.8
-RUN conda install --channel conda-forge --yes cudatoolkit="$CUDA_VERSION" cudnn="$CUDNN_VERSION"
+RUN conda install --name base conda-libmamba-solver && \
+    conda config --set solver libmamba && \
+    conda install --channel conda-forge --yes cudatoolkit="$CUDA_VERSION" cudnn="$CUDNN_VERSION"
