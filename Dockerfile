@@ -1,12 +1,11 @@
 # syntax=docker/dockerfile:1
 ARG PYTHON_VERSION=3.8
-ARG CUDA_VERSION=11.8
-ARG CUDNN_VERSION=8.9.4.25
-ARG TENSORRT_VERSION=8.6.1.6
 FROM python:$PYTHON_VERSION-slim AS base
+
 ARG CUDA_VERSION=11.8
 ARG CUDNN_VERSION=8.9.4.25
 ARG TENSORRT_VERSION=8.6.1.6
+
 # Install wget.
 RUN apt-get update && \
     apt-get install --yes wget && \
@@ -22,6 +21,13 @@ ENV PATH=/opt/conda/bin:$PATH
 # Install CUDA.
 RUN conda install --channel nvidia --yes cuda-runtime="$CUDA_VERSION"
 
+# Cuda version compatible with tensorRT version
+RUN if [ "$CUDA_VERSION" = "12.2" ]; then \
+        CUDA_TENSORRT_VESION=12.0; \
+    else \
+        CUDA_TENSORRT_VESION=$CUDA_VERSION; \
+    fi
+
 # Install cuDNN and TensorRT.
 RUN wget --quiet https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.1-1_all.deb && \
     dpkg -i cuda-keyring_1.1-1_all.deb && \
@@ -29,7 +35,7 @@ RUN wget --quiet https://developer.download.nvidia.com/compute/cuda/repos/ubuntu
     apt-get update && \
     apt-get install --yes \
         libcudnn8=$CUDNN_VERSION-1+cuda$CUDA_VERSION \
-        libnvinfer-lean8=$TENSORRT_VERSION-1+cuda$CUDA_VERSION && \
+        libnvinfer-lean8=$TENSORRT_VERSION-1+cuda$CUDA_TENSORRT_VESION && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
