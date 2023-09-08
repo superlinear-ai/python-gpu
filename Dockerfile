@@ -23,11 +23,12 @@ RUN conda install --channel nvidia --yes cuda-runtime="$CUDA_VERSION"
 
 # Cuda version compatible with tensorRT version
 RUN if [ "$CUDA_VERSION" = "12.2" ]; then \
-        CUDA_TENSORRT_VESION=12.0; \
+        CUDA_TENSORRT_VERSION=12.0; \
     else \
-        CUDA_TENSORRT_VESION=$CUDA_VERSION; \
+        CUDA_TENSORRT_VERSION=$CUDA_VERSION; \
     fi
 
+Run echo $CUDA_TENSORRT_VERSION
 # Install cuDNN and TensorRT.
 RUN wget --quiet https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.1-1_all.deb && \
     dpkg -i cuda-keyring_1.1-1_all.deb && \
@@ -35,7 +36,7 @@ RUN wget --quiet https://developer.download.nvidia.com/compute/cuda/repos/ubuntu
     apt-get update && \
     apt-get install --yes \
         libcudnn8=$CUDNN_VERSION-1+cuda$CUDA_VERSION \
-        libnvinfer-lean8=$TENSORRT_VERSION-1+cuda$CUDA_TENSORRT_VESION && \
+        libnvinfer-lean8=$TENSORRT_VERSION-1+cuda$CUDA_TENSORRT_VERSION && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
