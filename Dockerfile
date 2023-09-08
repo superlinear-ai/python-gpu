@@ -28,7 +28,7 @@ RUN if [ "$CUDA_VERSION" = "12.2" ]; then \
         CUDA_TENSORRT_VERSION=$CUDA_VERSION; \
     fi
 
-Run echo $CUDA_TENSORRT_VERSION
+RUN echo $CUDA_TENSORRT_VERSION
 # Install cuDNN and TensorRT.
 RUN wget --quiet https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.1-1_all.deb && \
     dpkg -i cuda-keyring_1.1-1_all.deb && \
