@@ -2,10 +2,6 @@
 ARG PYTHON_VERSION=3.8
 FROM python:$PYTHON_VERSION-slim AS base
 
-ARG CUDA_VERSION=11.8
-ARG CUDNN_VERSION=8.9.4.25
-ARG TENSORRT_VERSION=8.6.1.6
-
 # Install wget.
 RUN apt-get update && \
     apt-get install --yes wget && \
@@ -19,14 +15,6 @@ RUN CONDA_ARCH=$([ "$TARGETARCH" = "arm64" ] && echo "aarch64" || echo "x86_64")
 ENV PATH=/opt/conda/bin:$PATH
 
 # Install CUDA.
-RUN conda install --channel nvidia --yes cuda-runtime="$CUDA_VERSION"
-
-# Install CuDNN
-RUN wget --quiet https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/cuda-keyring_1.1-1_all.deb && \
-    dpkg -i cuda-keyring_1.1-1_all.deb && \
-    rm cuda-keyring_1.1-1_all.deb && \
-    apt-get update && \
-    apt-get install --yes \
-        libcudnn8=$CUDNN_VERSION-1+cuda$CUDA_VERSION && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+ARG CUDA_VERSION=11.8
+ARG CUDNN_VERSION=8.8
+RUN conda install --channel conda-forge --yes cudatoolkit="$CUDA_VERSION" cudnn="$CUDNN_VERSION"
