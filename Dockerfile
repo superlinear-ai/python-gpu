@@ -27,6 +27,6 @@ RUN wget --quiet https://developer.download.nvidia.com/compute/cuda/repos/debian
     rm cuda-keyring_1.1-1_all.deb && \
     apt-get update && \
     apt-get install --yes \
-        libcudnn8=$CUDNN_VERSION-1+cuda$CUDA_VERSION \
+        libcudnn8=$CUDNN_VERSION-1+cuda$CUDA_VERSION && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
