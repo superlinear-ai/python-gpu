@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 ARG PYTHON_VERSION=3.8
-FROM python:$PYTHON_VERSION-slim
+FROM python:$PYTHON_VERSION-slim-bullseye
 
 # Install wget.
 RUN apt-get update && \
@@ -19,7 +19,7 @@ ENV LD_LIBRARY_PATH=/opt/conda/lib:$LD_LIBRARY_PATH
 # Install CUDA and cuDNN.
 ARG CUDA_VERSION=11.8
 ARG CUDNN_VERSION=8.8
-RUN conda install --name base conda-libmamba-solver && \
+RUN conda install --name base --yes conda-libmamba-solver && \
     conda config --set solver libmamba && \
     conda install --name base --channel conda-forge --yes cudatoolkit="$CUDA_VERSION" cudnn="$CUDNN_VERSION" && \
     conda clean --all --force-pkgs-dirs --yes
