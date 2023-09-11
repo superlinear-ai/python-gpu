@@ -14,7 +14,7 @@ RUN CONDA_ARCH=$([ "$TARGETARCH" = "arm64" ] && echo "aarch64" || echo "x86_64")
     /bin/bash ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh
 ENV PATH=/opt/conda/bin:$PATH
-ENV LD_LIBRARY_PATH=/opt/conda/lib:$LD_LIBRARY_PATH
+# ENV LD_LIBRARY_PATH=/opt/conda/lib:$LD_LIBRARY_PATH
 
 # Install CUDA and cuDNN.
 ARG CUDA_VERSION=11.8
