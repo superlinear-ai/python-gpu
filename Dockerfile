@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 ARG PYTHON_VERSION=3.8
-FROM python:$PYTHON_VERSION-slim-bullseye
+FROM python:$PYTHON_VERSION
 
 # Install wget.
 RUN apt-get update && \
