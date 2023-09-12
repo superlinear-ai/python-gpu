@@ -10,7 +10,7 @@ A minimal CUDA and cuDNN install on top of the official `python:3.x-slim` base i
 - 🐍 Adds a single `micromamba` executable to install CUDA and cuDNN
 - 🧬 Matrix build for Python {3.8, 3.9, 3.10, 3.11} and CUDA {11.8}
 - 📦 Multi-platform build for `linux/amd64` and `linux/arm64`
-- ✨ Image size is only 1.8GB
+- 🐭 Image size is only 1.8GB
 
 ## ✨ Using
 
