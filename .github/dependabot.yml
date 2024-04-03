@@ -9,14 +9,7 @@ updates:
       prefix: "ci"
       prefix-development: "ci"
       include: "scope"
-  - package-ecosystem: pip
-    directory: /
-    schedule:
-      interval: monthly
-    commit-message:
-      prefix: "build"
-      prefix-development: "build"
-      include: "scope"
-    versioning-strategy: lockfile-only
-    allow:
-      - dependency-type: "all"
+    groups:
+      ci-dependencies:
+        patterns:
+          - "*"
