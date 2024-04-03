@@ -9,9 +9,11 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.8", "3.11"]
+        python-version: ["3.8", "3.11", "3.12"]
         cuda-version: ["11.8"]
         platform: ["linux/amd64", "linux/arm64"]
+
+    name: Python ${{ matrix.python-version }} CUDA ${{ matrix.cuda-version }} ${{ matrix.platform }}
 
     steps:
     - name: Checkout
