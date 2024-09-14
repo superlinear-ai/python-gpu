@@ -39,7 +39,7 @@ jobs:
           "CUDA_VERSION=${{ matrix.cuda-version }}"
         context: .
         platforms: ${{ matrix.platform }}
-        tags: radixai/python-gpu:${{ matrix.python-version }}-cuda${{ matrix.cuda-version }}
+        tags: superlinear/python-gpu:${{ matrix.python-version }}-cuda${{ matrix.cuda-version }}
 
     - name: Test Docker image
-      run: docker run --rm radixai/python-gpu:${{ matrix.python-version }}-cuda${{ matrix.cuda-version }}
+      run: docker run --rm superlinear/python-gpu:${{ matrix.python-version }}-cuda${{ matrix.cuda-version }}

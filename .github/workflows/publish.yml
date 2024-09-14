@@ -42,4 +42,4 @@ jobs:
         context: .
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: radixai/python-gpu:${{ matrix.python-version }}-cuda${{ matrix.cuda-version }}
+        tags: superlinear/python-gpu:${{ matrix.python-version }}-cuda${{ matrix.cuda-version }}
