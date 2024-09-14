@@ -1,4 +1,4 @@
-[![Open in Docker Hub](https://img.shields.io/static/v1?label=Docker%20Hub&message=Open&color=blue&logo=dockerhub)](https://hub.docker.com/r/radixai/python-gpu)
+[![Open in Docker Hub](https://img.shields.io/static/v1?label=Docker%20Hub&message=Open&color=blue&logo=dockerhub)](https://hub.docker.com/r/superlinear/python-gpu)
 
 # Python GPU
 
@@ -14,18 +14,18 @@ A minimal CUDA and cuDNN install on top of the official `python:3.x-slim` base i
 
 ## ✨ Using
 
-A matrix of tags are available that follow the format `radixai/python-gpu:$PYTHON_VERSION-cuda$CUDA_VERSION`, see the [Docker Hub repository](https://hub.docker.com/r/radixai/python-gpu/tags) for a full list.
+A matrix of tags are available that follow the format `superlinear/python-gpu:$PYTHON_VERSION-cuda$CUDA_VERSION`, see the [Docker Hub repository](https://hub.docker.com/r/superlinear/python-gpu/tags) for a full list.
 
 ### Running the image
 
 ```sh
-docker run -it --rm radixai/python-gpu:3.11-cuda11.8 /bin/bash
+docker run -it --rm superlinear/python-gpu:3.11-cuda11.8 /bin/bash
 ```
 
 ### Extending the image
 
 ```Dockerfile
-FROM radixai/python-gpu:3.11-cuda11.8
+FROM superlinear/python-gpu:3.11-cuda11.8
 
 ...
 ```
