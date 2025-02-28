@@ -32,7 +32,7 @@ jobs:
         password: ${{ secrets.REGISTRY_PASSWORD }}
 
     - name: Build Docker image
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v6
       with:
         build-args: |
           "PYTHON_VERSION=${{ matrix.python-version }}"
